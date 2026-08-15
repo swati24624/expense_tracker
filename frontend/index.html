@@ -1,0 +1,1029 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>SpendWise — Expense Tracker</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  >
+
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- ================= SIDEBAR ================= -->
+
+  <aside class="sidebar">
+
+    <div class="brand">
+      <span class="brand-mark">₹</span>
+      <span class="brand-name">SpendWise</span>
+    </div>
+
+    <nav class="nav">
+
+      <button class="nav-item active" data-view="dashboard">
+        <span class="nav-index">01</span>
+        Dashboard
+      </button>
+
+      <button class="nav-item" data-view="transactions">
+        <span class="nav-index">02</span>
+        Transactions
+      </button>
+
+      <button class="nav-item" data-view="analytics">
+        <span class="nav-index">03</span>
+        Analytics
+      </button>
+
+      <button class="nav-item" data-view="budget">
+        <span class="nav-index">04</span>
+        Budget
+      </button>
+
+      <button class="nav-item" data-view="calendar">
+        <span class="nav-index">05</span>
+        Calendar
+      </button>
+
+      <button class="nav-item" data-view="insights">
+        <span class="nav-index">06</span>
+        Insights
+      </button>
+
+      <button class="nav-item" data-view="data">
+        <span class="nav-index">07</span>
+        Import / Export
+      </button>
+
+    </nav>
+
+    <div class="sidebar-footer">
+
+      <div class="score-chip" id="sidebar-score">
+        <span class="score-chip-label">Money Score</span>
+        <span class="score-chip-value" id="sidebar-score-value">—</span>
+      </div>
+
+    </div>
+
+  </aside>
+
+
+  <!-- ================= MAIN ================= -->
+
+  <main class="main">
+
+    <!-- TOP BAR -->
+
+    <header class="topbar">
+
+      <form class="quick-add" id="quick-add-form">
+
+        <span class="quick-add-glyph">＋</span>
+
+        <input
+          type="text"
+          id="quick-add-input"
+          placeholder="e.g. spent 450 on groceries yesterday, or got 20000 salary today"
+          autocomplete="off"
+        >
+
+        <button type="submit" class="btn btn-ink">
+          Add entry
+        </button>
+
+      </form>
+
+      <div class="topbar-right">
+
+        <select id="global-month" class="select-month"></select>
+
+        <select id="global-year" class="select-year"></select>
+
+      </div>
+
+    </header>
+
+
+    <!-- QUICK ADD PREVIEW -->
+
+    <div
+      class="quick-add-preview"
+      id="quick-add-preview"
+    ></div>
+
+
+    <!-- =====================================================
+         DASHBOARD
+    ====================================================== -->
+
+    <section class="view active" id="view-dashboard">
+
+      <div class="view-head">
+
+        <h1>Dashboard</h1>
+
+        <p class="view-sub">
+          Where your money stood this month.
+        </p>
+
+      </div>
+
+
+      <!-- STAT CARDS -->
+
+      <div class="stat-grid">
+
+        <div class="stat-card">
+
+          <span class="stat-label">
+            Income
+          </span>
+
+          <span
+            class="stat-value mono"
+            id="stat-income"
+          >
+            ₹0
+          </span>
+
+          <span class="stat-rule"></span>
+
+        </div>
+
+
+        <div class="stat-card">
+
+          <span class="stat-label">
+            Expense
+          </span>
+
+          <span
+            class="stat-value mono negative"
+            id="stat-expense"
+          >
+            ₹0
+          </span>
+
+          <span class="stat-rule"></span>
+
+        </div>
+
+
+        <div class="stat-card">
+
+          <span class="stat-label">
+            Balance
+          </span>
+
+          <span
+            class="stat-value mono"
+            id="stat-balance"
+          >
+            ₹0
+          </span>
+
+          <span class="stat-rule"></span>
+
+        </div>
+
+
+        <div class="stat-card">
+
+          <span class="stat-label">
+            Savings rate
+          </span>
+
+          <span
+            class="stat-value mono"
+            id="stat-savings"
+          >
+            0%
+          </span>
+
+          <span class="stat-rule"></span>
+
+        </div>
+
+      </div>
+
+
+      <!-- CHARTS -->
+
+      <div class="grid-2">
+
+        <div class="panel">
+
+          <h3>
+            Last 6 months
+          </h3>
+
+          <canvas
+            id="chart-trend"
+            height="220"
+          ></canvas>
+
+        </div>
+
+
+        <div class="panel">
+
+          <h3>
+            Spend by category
+          </h3>
+
+          <canvas
+            id="chart-category-donut"
+            height="220"
+          ></canvas>
+
+        </div>
+
+      </div>
+
+
+      <!-- RECENT TRANSACTIONS -->
+
+      <div class="panel">
+
+        <div class="panel-head-row">
+
+          <h3>
+            Recent entries
+          </h3>
+
+          <button
+            class="link-btn"
+            data-goto="transactions"
+          >
+            View all →
+          </button>
+
+        </div>
+
+        <div
+          id="recent-transactions"
+          class="txn-list"
+        ></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         TRANSACTIONS
+    ====================================================== -->
+
+    <section
+      class="view"
+      id="view-transactions"
+    >
+
+      <div class="view-head">
+
+        <h1>
+          Transactions
+        </h1>
+
+        <p class="view-sub">
+          Every entry, in and out.
+        </p>
+
+      </div>
+
+
+      <!-- ADD TRANSACTION -->
+
+      <div class="panel">
+
+        <form
+          id="txn-form"
+          class="txn-form"
+        >
+
+          <input
+            type="hidden"
+            id="txn-id"
+          >
+
+
+          <div class="field">
+
+            <label>
+              Type
+            </label>
+
+            <select id="txn-type">
+
+              <option value="expense">
+                Expense
+              </option>
+
+              <option value="income">
+                Income
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Amount
+            </label>
+
+            <input
+              type="number"
+              id="txn-amount"
+              step="0.01"
+              min="0"
+              placeholder="0.00"
+              required
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Category
+            </label>
+
+            <select id="txn-category"></select>
+
+          </div>
+
+
+          <div class="field field-wide">
+
+            <label>
+              Description
+            </label>
+
+            <input
+              type="text"
+              id="txn-description"
+              placeholder="What was this for?"
+            >
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Date
+            </label>
+
+            <input
+              type="date"
+              id="txn-date"
+              required
+            >
+
+          </div>
+
+
+          <div class="field field-actions">
+
+            <button
+              type="submit"
+              class="btn btn-ink"
+              id="txn-submit-btn"
+            >
+              Add entry
+            </button>
+
+            <button
+              type="button"
+              class="btn btn-ghost"
+              id="txn-cancel-btn"
+              style="display:none"
+            >
+              Cancel edit
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+
+
+      <!-- TRANSACTION TABLE -->
+
+      <div class="panel">
+
+        <div class="filter-row">
+
+          <input
+            type="text"
+            id="filter-search"
+            placeholder="Search description or category…"
+          >
+
+          <select id="filter-type">
+
+            <option value="">
+              All types
+            </option>
+
+            <option value="income">
+              Income
+            </option>
+
+            <option value="expense">
+              Expense
+            </option>
+
+          </select>
+
+
+          <select id="filter-category">
+
+            <option value="">
+              All categories
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <table class="txn-table">
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Date
+              </th>
+
+              <th>
+                Category
+              </th>
+
+              <th>
+                Description
+              </th>
+
+              <th class="right">
+                Amount
+              </th>
+
+              <th class="right">
+                Actions
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody id="txn-table-body"></tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         ANALYTICS
+    ====================================================== -->
+
+    <section
+      class="view"
+      id="view-analytics"
+    >
+
+      <div class="view-head">
+
+        <h1>
+          Analytics
+        </h1>
+
+        <p class="view-sub">
+          Trends, categories, and what's ahead.
+        </p>
+
+      </div>
+
+
+      <div class="grid-2">
+
+        <div class="panel">
+
+          <h3>
+            Income vs expense trend
+          </h3>
+
+          <canvas
+            id="chart-trend-2"
+            height="240"
+          ></canvas>
+
+        </div>
+
+
+        <div class="panel">
+
+          <h3>
+            Category breakdown
+          </h3>
+
+          <canvas
+            id="chart-category-bar"
+            height="240"
+          ></canvas>
+
+        </div>
+
+      </div>
+
+
+      <!-- FORECAST + ANOMALIES -->
+
+      <div class="grid-2">
+
+        <div class="panel">
+
+          <h3>
+            Forecast — next month
+          </h3>
+
+          <div class="forecast-row">
+
+            <div>
+
+              <span class="stat-label">
+                Predicted income
+              </span>
+
+              <span
+                class="mono forecast-val"
+                id="fc-income"
+              >
+                ₹0
+              </span>
+
+            </div>
+
+
+            <div>
+
+              <span class="stat-label">
+                Predicted expense
+              </span>
+
+              <span
+                class="mono forecast-val negative"
+                id="fc-expense"
+              >
+                ₹0
+              </span>
+
+            </div>
+
+
+            <div>
+
+              <span class="stat-label">
+                Predicted balance
+              </span>
+
+              <span
+                class="mono forecast-val"
+                id="fc-balance"
+              >
+                ₹0
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <p class="muted small">
+            Based on a trend-adjusted weighted average of
+            your last few months — not magic, just your own
+            history.
+          </p>
+
+        </div>
+
+
+        <div class="panel">
+
+          <h3>
+            Unusual expenses
+          </h3>
+
+          <div
+            id="anomaly-list"
+            class="list-simple"
+          ></div>
+
+        </div>
+
+      </div>
+
+
+      <!-- RECURRING PAYMENTS -->
+
+      <div class="panel">
+
+        <h3>
+          Recurring payments detected
+        </h3>
+
+        <div
+          id="recurring-list"
+          class="list-simple"
+        ></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         BUDGET
+    ====================================================== -->
+
+    <section
+      class="view"
+      id="view-budget"
+    >
+
+      <div class="view-head">
+
+        <h1>
+          Budget
+        </h1>
+
+        <p class="view-sub">
+          Set limits, watch how close you are.
+        </p>
+
+      </div>
+
+
+      <div class="panel">
+
+        <form
+          id="budget-form"
+          class="budget-form"
+        >
+
+          <div class="field">
+
+            <label>
+              Scope
+            </label>
+
+            <select id="budget-category">
+
+              <option value="">
+                Overall (all categories)
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="field">
+
+            <label>
+              Monthly limit
+            </label>
+
+            <input
+              type="number"
+              id="budget-amount"
+              step="0.01"
+              min="0"
+              placeholder="0.00"
+              required
+            >
+
+          </div>
+
+
+          <div class="field field-actions">
+
+            <button
+              type="submit"
+              class="btn btn-ink"
+            >
+              Save budget
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+
+
+      <div class="panel">
+
+        <h3>
+          This month's limits
+        </h3>
+
+        <div
+          id="budget-status-list"
+          class="budget-list"
+        ></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CALENDAR
+    ====================================================== -->
+
+    <section
+      class="view"
+      id="view-calendar"
+    >
+
+      <div class="view-head">
+
+        <h1>
+          Calendar
+        </h1>
+
+        <p class="view-sub">
+          Every day, at a glance.
+        </p>
+
+      </div>
+
+
+      <div class="panel">
+
+        <div class="calendar-grid-head">
+
+          <span>Sun</span>
+          <span>Mon</span>
+          <span>Tue</span>
+          <span>Wed</span>
+          <span>Thu</span>
+          <span>Fri</span>
+          <span>Sat</span>
+
+        </div>
+
+
+        <div
+          class="calendar-grid"
+          id="calendar-grid"
+        ></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         INSIGHTS
+    ====================================================== -->
+
+    <section
+      class="view"
+      id="view-insights"
+    >
+
+      <div class="view-head">
+
+        <h1>
+          Insights & alerts
+        </h1>
+
+        <p class="view-sub">
+          What the numbers are telling you.
+        </p>
+
+      </div>
+
+
+      <div class="grid-2">
+
+        <div class="panel">
+
+          <h3>
+            Smart insights
+          </h3>
+
+          <div
+            id="insights-list"
+            class="list-simple"
+          ></div>
+
+        </div>
+
+
+        <div class="panel">
+
+          <h3>
+            Alerts
+          </h3>
+
+          <div
+            id="alerts-list"
+            class="list-simple"
+          ></div>
+
+        </div>
+
+      </div>
+
+
+      <!-- MONEY SCORE -->
+
+      <div class="panel score-panel">
+
+        <h3>
+          Money score
+        </h3>
+
+        <div class="score-display">
+
+          <div
+            class="score-ring"
+            id="score-ring"
+          >
+
+            <span id="score-number">
+              —
+            </span>
+
+          </div>
+
+
+          <p class="muted">
+            A rough blend of your savings rate and how
+            well you're sticking to budget this month.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         IMPORT / EXPORT
+    ====================================================== -->
+
+    <section
+      class="view"
+      id="view-data"
+    >
+
+      <div class="view-head">
+
+        <h1>
+          Import & export
+        </h1>
+
+        <p class="view-sub">
+          Bring data in, or take it with you.
+        </p>
+
+      </div>
+
+
+      <div class="grid-2">
+
+        <!-- IMPORT -->
+
+        <div class="panel">
+
+          <h3>
+            Import CSV
+          </h3>
+
+          <p class="muted small">
+
+            Expects columns like
+
+            <code>
+              date, type, category, amount, description
+            </code>.
+
+            Missing category or type is filled in
+            automatically.
+
+          </p>
+
+
+          <input
+            type="file"
+            id="import-file"
+            accept=".csv"
+          >
+
+
+          <button
+            class="btn btn-ink"
+            id="import-btn"
+          >
+            Upload & import
+          </button>
+
+
+          <p
+            id="import-result"
+            class="muted small"
+          ></p>
+
+        </div>
+
+
+        <!-- EXPORT -->
+
+        <div class="panel">
+
+          <h3>
+            Export
+          </h3>
+
+          <p class="muted small">
+            Download everything you've logged so far.
+          </p>
+
+
+          <div class="export-actions">
+
+            <a
+              class="btn btn-ghost"
+              href="/api/export/csv"
+            >
+              Export CSV
+            </a>
+
+
+            <a
+              class="btn btn-ghost"
+              href="/api/export/pdf"
+            >
+              Export PDF report
+            </a>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<!-- TOAST -->
+
+<div
+  class="toast"
+  id="toast"
+></div>
+
+
+
+
+<script src="js/api.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/calendar.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
+```
